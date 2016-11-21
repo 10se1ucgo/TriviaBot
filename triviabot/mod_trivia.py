@@ -1,4 +1,5 @@
-import random
+import threading
+import functools
 
 from twisted.internet import reactor
 
@@ -37,7 +38,9 @@ def trivia(bot, user, channel, args):
     bot.add_event(event)
 
     # Wait 5s before showing the question
-    reactor.callLater(5.0, bot.send_msg, channel, question.question)
+    t = threading.Timer(5.0, functools.partial(bot.send_msg, channel, question.question))
+    t.start()
 
     # Solve the question if nobody has answered correctly
-    reactor.callLater(duration, question.expire, bot, channel, event)
+    t = threading.Timer(duration, functools.partial(question.expire, bot, channel, event))
+    t.start()
