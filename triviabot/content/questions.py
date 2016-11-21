@@ -1,8 +1,8 @@
 import random
 import time
-from triviabot.utilities import strip_tags, separate_name
+from utilities import strip_tags, separate_name
 
-import triviabot.db as db
+import db as db
 
 
 class Question:
