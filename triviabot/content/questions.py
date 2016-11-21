@@ -27,7 +27,7 @@ class Question:
             score = user.score
 
         bot.send_msg(channel, 'Correct answer "{answer}" by {nick}! Your new score is {score}.'
-                     .format(answer=answer, nick=nick, score=score))
+                     .format(answer=self.answer.title(), nick=nick, score=score))
 
     def expire(self, bot, channel, event):
         """Called when the duration of question is over."""
