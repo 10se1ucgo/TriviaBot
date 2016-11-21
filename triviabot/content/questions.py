@@ -2,7 +2,7 @@ import random
 import time
 from utilities import strip_tags, separate_name
 
-import db as db
+import db
 
 
 class Question:
