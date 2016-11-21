@@ -5,7 +5,7 @@ from twisted.internet import reactor
 import riotwatcher
 from riotwatcher import RateLimit, EUROPE_WEST
 
-from content.questions import question_generators
+from content.questions import generate_question
 from config import config
 from utilities import separate_name
 from mod_help import add_helptext
@@ -30,7 +30,7 @@ def trivia(bot, user, channel, args):
     bot.send_msg(channel, '%s has started a new trivia round! Get ready!' % nick)
 
     # Prepare the question
-    question = random.choice(question_generators)(watcher)
+    question = generate_question(watcher)
     duration = 20.0  # in seconds
 
     event = bot.Event(question.answer, channel, question.solve_question)

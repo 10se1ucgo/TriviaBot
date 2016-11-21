@@ -34,15 +34,27 @@ class Question:
         time.sleep(5.0)
         if not event.consumed:
             bot.del_event(event)
-            bot.send_msg(channel, 'Time is up! The correct answer is "{answer}"'.format(answer=self.answer))
+            bot.send_msg(channel, 'Time is up! The correct answer is "{answer}".'.format(answer=self.answer.title()))
 
 
 # Utility functions
 def get_random_champion_id(watcher):
-    """Returns a random champion_id."""
+    """Returns a random champion id."""
     champions = watcher.static_get_champion_list()['data']
 
     return champions[random.choice(champions.keys())]['id']
+
+
+def get_random_item_id(watcher):
+    """Returns a random item id."""
+    items = watcher.static_get_item_list()['data']
+    return items[random.choice(items.keys())]['id']
+
+
+def get_random_summoner_spell_id(watcher):
+    """Returns a random summoner spell id."""
+    summoner_spells = watcher.static_get_summoner_spell_list()['data']
+    return summoner_spells[random.choice(summoner_spells.keys())]['id']
 
 
 def strip_champion_name(text, name):
@@ -56,6 +68,13 @@ def strip_champion_name(text, name):
 #     return question
 
 
+def generate_question(watcher):
+    """Returns a Question from a randomly chosen generator."""
+    return random.choice(_question_generators)(watcher)
+
+
+# TODO Document generator functions
+# TODO Make this code less repetitive
 # Champion Data
 def champion_from_spell_name(watcher):
     champion_id = get_random_champion_id(watcher)
@@ -196,7 +215,95 @@ def champion_from_passive(watcher):
     return question
 
 
-question_generators = [
+# Item Data
+def item_from_description(watcher):
+    item_id = get_random_item_id(watcher)
+
+    item = watcher.static_get_item(item_id, item_data='sanitizedDescription')
+    name = item['name']
+    description = item['sanitizedDescription']
+
+    question = Question('Which item is this? {description}'.format(description=description), name)
+
+    return question
+
+
+def item_from_plaintext(watcher):
+    item_id = get_random_item_id(watcher)
+
+    item = watcher.static_get_item(item_id)
+    name = item['name']
+    plaintext = item['plaintext']
+
+    question = Question('Which item is this? {description}'.format(description=plaintext), name)
+
+    return question
+
+
+def item_gold_cost(watcher):
+    item_id = get_random_item_id(watcher)
+
+    item = watcher.static_get_item(item_id, item_data='gold')
+    name = item['name']
+    gold = str(item['gold']['total'])
+
+    question = Question('How much is {item}?'.format(item=name), gold)
+
+    return question
+
+
+def item_gold_sell(watcher):
+    item_id = get_random_item_id(watcher)
+
+    item = watcher.static_get_item(item_id, item_data='gold')
+    name = item['name']
+    gold = str(item['gold']['sell'])
+
+    question = Question('How much does {item} sell for?'.format(item=name), gold)
+
+    return question
+
+
+def item_stat(watcher):
+    # FIXME make stat readable & answer non-float but also accept percentages
+    item_id = get_random_item_id(watcher)
+
+    item = watcher.static_get_item(item_id, item_data='stats')
+    name = item['name']
+
+    if item['stats']:
+        stat = random.choice(item['stats'].keys())
+        value = str(item['stats'][stat])
+
+        question = Question('How much {stat} does {item} give you?'.format(stat=stat, item=name), value)
+    else:  # Some items don't have stats, e.g. Total Biscuit of Rejuvenation
+        question = generate_question(watcher)
+
+    return question
+
+
+# Summoner spells
+def summoner_from_description(watcher):
+    summoner_spell_id = get_random_summoner_spell_id(watcher)
+
+    summoner_spell = watcher.static_get_summoner_spell(summoner_spell_id, spell_data='sanitizedDescription')
+    name = summoner_spell['name']
+    description = summoner_spell['sanitizedDescription']
+
+    return Question('Which summoner spell is this? {text}'.format(text=description), name)
+
+
+def summoner_cooldown(watcher):
+    summoner_spell_id = get_random_summoner_spell_id(watcher)
+
+    summoner_spell = watcher.static_get_summoner_spell(summoner_spell_id, spell_data='cooldownBurn')
+    name = summoner_spell['name']
+    cd = summoner_spell['cooldownBurn']
+
+    return Question('What\'s the cooldown of "{spell}"? (without masteries)'.format(spell=name), cd)
+
+
+_question_generators = [
     # Pretty name -> function callback
     # example_generator,
     spell_name_from_champion,
@@ -208,4 +315,11 @@ question_generators = [
     champion_from_blurb,
     champion_from_skins,
     champion_from_passive,
+    item_from_description,
+    item_from_plaintext,
+    item_gold_cost,
+    item_gold_sell,
+    # item_stat,  # FIXME
+    summoner_from_description,
+    summoner_cooldown,
 ]
