@@ -64,7 +64,7 @@ def strip_champion_name(text, name):
 # Generators
 # def example_generator(watcher):
 #     # type: (None) -> Question
-#     question = random.choice([Question('Is this real life?', 'Is this just fantasy?'), Question('What\'s 1+1?', '2')])
+#     return random.choice([Question('Is this real life?', 'Is this just fantasy?'), Question('What\'s 1+1?', '2')])
 #     return question
 
 
@@ -84,9 +84,7 @@ def champion_from_spell_name(watcher):
     name = str(champion['name'])
     spell = str(random.choice(champion['spells'])['name'])  # Choose a random spell
 
-    question = Question('Which champion has a skill called "{spell}"?'.format(spell=spell), name)
-
-    return question
+    return Question('Which champion has a skill called "{spell}"?'.format(spell=spell), name)
 
 
 def spell_name_from_champion(watcher):
@@ -99,10 +97,8 @@ def spell_name_from_champion(watcher):
     spell_name = str(spell['name'])
     spell_key = str(spell['key'][-1:])
 
-    question = Question('What\'s the name of {champion}\'s {spell}?'
+    return Question('What\'s the name of {champion}\'s {spell}?'
                         .format(champion=name, spell=spell_key.upper()), spell_name)
-
-    return question
 
 
 def spell_name_from_description(watcher):
@@ -115,10 +111,8 @@ def spell_name_from_description(watcher):
     spell_name = str(spell['name'])
     spell_description = strip_champion_name(strip_champion_name(str(spell['sanitizedDescription']), name), spell_name)
 
-    question = Question('What\'s the name of the following spell? "{description}"'
+    return Question('What\'s the name of the following spell? "{description}"'
                         .format(description=spell_description), spell_name)
-
-    return question
 
 
 def champion_from_title(watcher):  # TODO Add caching & Exception handling
@@ -128,9 +122,7 @@ def champion_from_title(watcher):  # TODO Add caching & Exception handling
     title = str(champion['title'])
     name = str(champion['name'])
 
-    question = Question('Which champion has the title "{title}"?'.format(title=title), name)
-
-    return question
+    return Question('Which champion has the title "{title}"?'.format(title=title), name)
 
 
 def champion_from_enemytips(watcher):
@@ -146,10 +138,8 @@ def champion_from_enemytips(watcher):
 
     tips = str(tips)
 
-    question = Question('Which champion are you playing against if you should follow these tips? \n{tips}'
+    return Question('Which champion are you playing against if you should follow these tips? \n{tips}'
                         .format(tips=tips), name)
-
-    return question
 
 
 def champion_from_allytips(watcher):
@@ -166,10 +156,8 @@ def champion_from_allytips(watcher):
 
     tips = str(tips)
 
-    question = Question('Which champion do you have in your team if you should follow these tips? \n{tips}'
+    return Question('Which champion do you have in your team if you should follow these tips? \n{tips}'
                         .format(tips=tips), name)
-
-    return question
 
 
 def champion_from_blurb(watcher):
@@ -179,9 +167,7 @@ def champion_from_blurb(watcher):
     name = str(champion['name'])
     blurb = str(strip_champion_name(strip_tags(champion['blurb']), name))
 
-    question = Question('Which champion\'s lore is this? {blurb}'.format(blurb=blurb), name)
-
-    return question
+    return Question('Which champion\'s lore is this? {blurb}'.format(blurb=blurb), name)
 
 
 def champion_from_skins(watcher):
@@ -198,9 +184,7 @@ def champion_from_skins(watcher):
 
     skin_string = strip_champion_name(skin_string[:-2], name)  # remove trailing comma
 
-    question = Question('Which champion\'s skins are these? {skins}'.format(skins=skin_string), name)
-
-    return question
+    return Question('Which champion\'s skins are these? {skins}'.format(skins=skin_string), name)
 
 
 def champion_from_passive(watcher):
@@ -210,9 +194,7 @@ def champion_from_passive(watcher):
     name = str(champion['name'])
     passive = str(strip_champion_name(champion['passive']['sanitizedDescription'], name))
 
-    question = Question('Which champion\'s passive is this? {passive}'.format(passive=passive), name)
-
-    return question
+    return Question('Which champion\'s passive is this? {passive}'.format(passive=passive), name)
 
 
 # Item Data
@@ -223,9 +205,7 @@ def item_from_description(watcher):
     name = item['name']
     description = item['sanitizedDescription']
 
-    question = Question('Which item is this? {description}'.format(description=description), name)
-
-    return question
+    return Question('Which item is this? {description}'.format(description=description), name)
 
 
 def item_from_plaintext(watcher):
@@ -235,9 +215,7 @@ def item_from_plaintext(watcher):
     name = item['name']
     plaintext = item['plaintext']
 
-    question = Question('Which item is this? {description}'.format(description=plaintext), name)
-
-    return question
+    return Question('Which item is this? {description}'.format(description=plaintext), name)
 
 
 def item_gold_cost(watcher):
@@ -247,9 +225,7 @@ def item_gold_cost(watcher):
     name = item['name']
     gold = str(item['gold']['total'])
 
-    question = Question('How much is {item}?'.format(item=name), gold)
-
-    return question
+    return Question('How much is {item}?'.format(item=name), gold)
 
 
 def item_gold_sell(watcher):
@@ -259,9 +235,7 @@ def item_gold_sell(watcher):
     name = item['name']
     gold = str(item['gold']['sell'])
 
-    question = Question('How much does {item} sell for?'.format(item=name), gold)
-
-    return question
+    return Question('How much does {item} sell for?'.format(item=name), gold)
 
 
 def item_stat(watcher):
@@ -275,11 +249,9 @@ def item_stat(watcher):
         stat = random.choice(item['stats'].keys())
         value = str(item['stats'][stat])
 
-        question = Question('How much {stat} does {item} give you?'.format(stat=stat, item=name), value)
+        return Question('How much {stat} does {item} give you?'.format(stat=stat, item=name), value)
     else:  # Some items don't have stats, e.g. Total Biscuit of Rejuvenation
-        question = generate_question(watcher)
-
-    return question
+        return generate_question(watcher)
 
 
 # Summoner spells
