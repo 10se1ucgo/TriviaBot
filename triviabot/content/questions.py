@@ -93,9 +93,8 @@ def spell_name_from_champion(watcher):
     champion = watcher.static_get_champion(champion_id, champ_data='spells')
 
     name = str(champion['name'])
-    spell = random.choice(champion['spells'])  # Choose a random spell
-    spell_name = str(spell['name'])
-    spell_key = str(spell['key'][-1:])
+    r = random.randint(0,3)  # Choose a random number to correspond to spell and key.
+    spell_key, spell_name = 'QWER'[r], champion['spells'][r]['name']
 
     return Question('What\'s the name of {champion}\'s {spell}?'
                         .format(champion=name, spell=spell_key.upper()), spell_name)
