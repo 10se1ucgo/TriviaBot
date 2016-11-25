@@ -12,14 +12,8 @@ config = {
     'startup_modules': [
         'mod_trivia',
         'mod_help',
-        'mod_redis'
+        'mod_scores',
     ],
-
-     'redis': {
-        'host': 'localhost',
-        'port': 6379,
-        'db': 0
-    },
 
     'nickname': 'Adurna|Trivia',
     'realname': 'Adurna Trivia Bot',
