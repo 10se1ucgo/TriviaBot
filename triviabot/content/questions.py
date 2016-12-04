@@ -1,4 +1,5 @@
 import random
+import string
 import time
 from utilities import strip_tags, separate_name
 
@@ -27,14 +28,14 @@ class Question:
             score = user.score
 
         bot.send_msg(channel, 'Correct answer "{answer}" by {nick}! Your new score is {score}.'
-                     .format(answer=self.answer.title(), nick=nick, score=score))
+                     .format(answer=string.capwords(self.answer), nick=nick, score=score))
 
     def expire(self, bot, channel, event):
         """Called when the duration of question is over."""
         time.sleep(5.0)
         if not event.consumed:
             bot.del_event(event)
-            bot.send_msg(channel, 'Time is up! The correct answer is "{answer}".'.format(answer=self.answer.title()))
+            bot.send_msg(channel, 'Time is up! The correct answer is "{answer}".'.format(answer=string.capwords(self.answer)))
 
 
 # Utility functions
